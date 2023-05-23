@@ -219,9 +219,11 @@ def set_template(args):
         if args.template.startswith('bert_test_batch1'):
             batch = 64
         elif args.template.startswith('bert_test_batch2'):
-            batch = 1024
+            batch = 512
         elif args.template.startswith('bert_test_batch3'):
-            batch = 4096
+            batch = 1024
+        elif args.template.startswith('bert_test_batch4'):
+            batch = 2048
         args.train_batch_size = batch
         args.val_batch_size = batch
         args.test_batch_size = batch
@@ -247,7 +249,7 @@ def set_template(args):
         args.enable_lr_schedule = True
         args.decay_step = 25
         args.gamma = 1.0
-        args.num_epochs = 50
+        args.num_epochs = 100
         args.metric_ks = [1, 5, 10]
         args.best_metric = 'NDCG@10'
 
