@@ -23,6 +23,18 @@ def ndcg(scores, labels, k):
     ndcg = dcg / idcg
     return ndcg.mean()
 
+def mrr(scores, labels, k):
+    scores = scores
+    labels = labels
+    rank = (-scores).argsort(dim=1)
+    cut = rank
+    hit = labels.gather(1, cut)
+
+    hits2 = hit.argmax(dim=1)
+    hits2 = hits2+1
+    hits2= 1/hits2
+    return torch.mean(hits2).cpu().item()
+
 
 def recalls_and_ndcgs_for_ks(scores, labels, ks):
     metrics = {}
@@ -34,6 +46,14 @@ def recalls_and_ndcgs_for_ks(scores, labels, ks):
     labels_float = labels.float()
     rank = (-scores).argsort(dim=1)
     cut = rank
+
+    hits = labels_float.gather(1, cut)
+    hits2 = hits.argmax(dim=1)
+    hits2 = hits2+1
+    hits2= 1/hits2
+
+    metrics['MMR'] = torch.mean(hits2).cpu().item()
+
     for k in sorted(ks, reverse=True):
        cut = cut[:, :k]
        hits = labels_float.gather(1, cut)

@@ -127,7 +127,8 @@ class AbstractTrainer(metaclass=ABCMeta):
                 for k, v in metrics.items():
                     average_meter_set.update(k, v)
                 description_metrics = ['NDCG@%d' % k for k in self.metric_ks[:3]] +\
-                                      ['Recall@%d' % k for k in self.metric_ks[:3]]
+                                      ['Recall@%d' % k for k in self.metric_ks[:3]] +\
+                                      ['MRR']
                 description = 'Val: ' + ', '.join(s + ' {:.3f}' for s in description_metrics)
                 description = description.replace('NDCG', 'N').replace('Recall', 'R')
                 description = description.format(*(average_meter_set[k].avg for k in description_metrics))
@@ -161,7 +162,8 @@ class AbstractTrainer(metaclass=ABCMeta):
                 for k, v in metrics.items():
                     average_meter_set.update(k, v)
                 description_metrics = ['NDCG@%d' % k for k in self.metric_ks[:3]] +\
-                                      ['Recall@%d' % k for k in self.metric_ks[:3]]
+                                      ['Recall@%d' % k for k in self.metric_ks[:3]] +\
+                                      ['MRR']
                 description = 'Val: ' + ', '.join(s + ' {:.3f}' for s in description_metrics)
                 description = description.replace('NDCG', 'N').replace('Recall', 'R')
                 description = description.format(*(average_meter_set[k].avg for k in description_metrics))
@@ -197,6 +199,8 @@ class AbstractTrainer(metaclass=ABCMeta):
                 MetricGraphPrinter(writer, key='NDCG@%d' % k, graph_name='NDCG@%d' % k, group_name='Validation'))
             val_loggers.append(
                 MetricGraphPrinter(writer, key='Recall@%d' % k, graph_name='Recall@%d' % k, group_name='Validation'))
+        val_loggers.append(
+                MetricGraphPrinter(writer, key='MRR', graph_name='MMR', group_name='Validation'))
         val_loggers.append(RecentModelLogger(model_checkpoint))
         val_loggers.append(BestModelLogger(model_checkpoint, metric_key=self.best_metric))
         return writer, train_loggers, val_loggers
